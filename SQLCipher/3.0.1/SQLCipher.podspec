@@ -15,17 +15,28 @@ Pod::Spec.new do |s|
   s.default_subspec = 'standard'
   
   # standard compiler flags
-  s.subspec 'standard' do |ss|
+  s.subspec 'common' do |ss|
     ss.frameworks = 'Security'
     ss.compiler_flags = '-DSQLITE_HAS_CODEC', '-DSQLITE_TEMP_STORE=2', '-DSQLITE_THREADSAFE', '-DSQLCIPHER_CRYPTO_CC'
     ss.source_files = 'sqlite3.c', 'sqlite3.h'
+    ss.requires_arc = false
+  end
+
+  # standard compiler flags
+  s.subspec 'standard' do |ss|
+    ss.dependency 'SQLCipher/common'
+  end
+
+  # Enable the FTS (full text search) extension
+  s.subspec 'fts' do |ss|
+    ss.dependency 'SQLCipher/common'
+    ss.compiler_flags = '-DSQLITE_ENABLE_FTS4', '-DSQLITE_ENABLE_FTS3_PARENTHESIS'
   end
   
   # for cases where you require unlock_notify to be available
   s.subspec 'unlock_notify' do |ss|
-    ss.frameworks = 'Security'
-    ss.compiler_flags = '-DSQLITE_HAS_CODEC', '-DSQLITE_TEMP_STORE=2', '-DSQLITE_THREADSAFE', '-DSQLCIPHER_CRYPTO_CC', '-DSQLITE_ENABLE_UNLOCK_NOTIFY'
-    ss.source_files = 'sqlite3.c', 'sqlite3.h'
+    ss.dependency 'SQLCipher/common'
+    ss.compiler_flags = '-DSQLITE_ENABLE_UNLOCK_NOTIFY'
   end
-  s.requires_arc = false
+
 end
