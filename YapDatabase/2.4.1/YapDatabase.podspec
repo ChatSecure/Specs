@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   s.subspec 'SQLCipher' do |ss|
     ss.dependency 'SQLCipher/fts'
     ss.dependency 'YapDatabase/common'
-    ss.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DSQLITE_HAS_CODEC' }
+    ss.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DSQLITE_HAS_CODEC -DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_FTS3_PARENTHESIS' }
   end
 
 end
