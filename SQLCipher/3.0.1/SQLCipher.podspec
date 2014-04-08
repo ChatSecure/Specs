@@ -7,6 +7,11 @@ Pod::Spec.new do |s|
   s.homepage = 'http://sqlcipher.net'
   s.author       = 'Zetetic LLC'
   s.source   = { :git => 'https://github.com/sqlcipher/sqlcipher.git', :tag => 'v3.0.1' }
+  s.requires_arc = false
+  s.prepare_command = <<-CMD
+      ./configure --enable-tempstore=yes --with-crypto-lib=commoncrypto CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2 -DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_ENABLE_UNLOCK_NOTIFY"
+      make sqlite3.c
+    CMD
   
   s.default_subspec = 'standard'
   
@@ -21,30 +26,18 @@ Pod::Spec.new do |s|
   # standard compiler flags
   s.subspec 'standard' do |ss|
     ss.dependency 'SQLCipher/common'
-    ss.prepare_command = <<-CMD
-      ./configure --enable-tempstore=yes --with-crypto-lib=commoncrypto CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2"
-      make sqlite3.c
-    CMD
   end
 
   # Enable the FTS (full text search) extension
   s.subspec 'fts' do |ss|
     ss.dependency 'SQLCipher/common'
     ss.compiler_flags = '-DSQLITE_ENABLE_FTS4', '-DSQLITE_ENABLE_FTS3_PARENTHESIS'
-    ss.prepare_command = <<-CMD
-      ./configure --enable-tempstore=yes --with-crypto-lib=commoncrypto CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2 -DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_FTS3_PARENTHESIS"
-      make sqlite3.c
-    CMD
   end
   
   # for cases where you require unlock_notify to be available
   s.subspec 'unlock_notify' do |ss|
     ss.dependency 'SQLCipher/common'
     ss.compiler_flags = '-DSQLITE_ENABLE_UNLOCK_NOTIFY'
-    ss.prepare_command = <<-CMD
-      ./configure --enable-tempstore=yes --with-crypto-lib=commoncrypto CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2 -DSQLITE_ENABLE_UNLOCK_NOTIFY"
-      make sqlite3.c
-    CMD
   end
 
 end
